@@ -1,0 +1,178 @@
+/* Case Timeline Styling */
+
+.case-timeline {
+  width: 100%;
+}
+
+.timeline-container {
+  position: relative;
+  padding: 20px 0;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.timeline-item__marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  color: var(--white);
+  font-weight: bold;
+}
+
+.timeline-item--completed .timeline-item__marker {
+  background: var(--success-600);
+}
+
+.timeline-item--pending .timeline-item__marker {
+  background: var(--gray-300);
+  color: var(--gray-600);
+}
+
+.timeline-item--note .timeline-item__marker {
+  background: var(--blue-600);
+}
+
+.timeline-item__line {
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  width: 2px;
+  bottom: -24px;
+  background: var(--gray-200);
+}
+
+.timeline-item--completed .timeline-item__line {
+  background: var(--success-600);
+}
+
+.timeline-item--note .timeline-item__line {
+  background: var(--blue-600);
+}
+
+.timeline-item__content {
+  flex: 1;
+  padding-top: 4px;
+  padding-bottom: 8px;
+}
+
+.timeline-item__stage {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+}
+
+.timeline-item--pending .timeline-item__stage {
+  color: var(--gray-600);
+}
+
+.timeline-item__details {
+  font-size: 14px;
+  color: var(--gray-700);
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.timeline-item__timestamp {
+  font-size: 13px;
+  color: var(--gray-500);
+  font-style: italic;
+}
+
+/* Progress Notes Styling */
+
+.progress-notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progress-note-item {
+  padding: 12px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+}
+
+.progress-note-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.progress-note-item__time {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+.progress-note-item__type {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  background: var(--blue-100);
+  color: var(--blue-600);
+  border-radius: 4px;
+  text-transform: capitalize;
+}
+
+.progress-note-item__content {
+  font-size: 14px;
+  color: var(--gray-700);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .timeline-item {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .timeline-item__marker {
+    width: 36px;
+    height: 36px;
+  }
+
+  .timeline-item__marker svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .timeline-item__line {
+    left: 17px;
+  }
+
+  .timeline-item__stage {
+    font-size: 14px;
+  }
+
+  .timeline-item__details {
+    font-size: 13px;
+  }
+
+  .timeline-item__timestamp {
+    font-size: 12px;
+  }
+
+  .progress-note-item__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
