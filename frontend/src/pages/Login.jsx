@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { Scale, LogIn, AlertCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext.jsx'
 import { apiErrorMessage } from '../api/client.js'
@@ -82,9 +82,17 @@ export default function Login() {
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
 
-        <div className="demo-hint">
-          Demo accounts: <code>user</code> / <code>user</code> · <code>lawyer</code> /{' '}
-          <code>lawyer</code>
+        <div className="login-footer">
+          <div className="demo-hint">
+            Demo accounts: <code>user</code> / <code>user</code> · <code>lawyer</code> /{' '}
+            <code>lawyer</code>
+          </div>
+          <div className="login-register-link">
+            <span>Don't have an account?</span>
+            <Link to="/register" className="link">
+              Register here
+            </Link>
+          </div>
         </div>
       </form>
     </div>

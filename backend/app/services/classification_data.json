@@ -1,0 +1,120 @@
+{
+  "curated_patterns": {
+    "CRI01": [
+      "assault", "threatened", "threatening", "attacked", "theft",
+      "stolen", "robbed", "arrested", "bail", "police complaint",
+      "criminal case", "offence", "offense"
+    ],
+    "FRA01": [
+      "forged", "forgery", "cheated", "cheating", "deceived",
+      "defrauded", "misrepresented", "deception"
+    ],
+    "PRO02": [
+      "landlord", "tenant", "eviction", "lease", "security deposit",
+      "rental deposit", "rent agreement", "rent"
+    ],
+    "PRO01": [
+      "boundary", "encroachment", "title deed", "land ownership",
+      "property ownership", "land dispute", "land"
+    ],
+    "PRO03": [
+      "inheritance", "succession", "probate", "heir", "estate dispute",
+      "will dispute", "inherited"
+    ],
+    "CON01": [
+      "breach", "breached", "contract", "agreement", "violated",
+      "failed to complete", "non payment", "non-payment"
+    ],
+    "CYB01": [
+      "phishing", "hacked", "online scam", "identity theft",
+      "cyber fraud", "cybercrime"
+    ],
+    "MED01": [
+      "medical negligence", "malpractice", "hospital", "treatment",
+      "surgery"
+    ],
+    "IPR01": [
+      "copyright", "trademark", "patent", "intellectual property"
+    ],
+    "EMP01": [
+      "termination", "terminated", "dismissed", "fired", "harassment",
+      "workplace", "employer"
+    ],
+    "EMP02": [
+      "salary", "wages", "unpaid", "bonus", "overtime", "final settlement"
+    ],
+    "BANK01": [
+      "bank", "loan", "interest rate", "banking"
+    ],
+    "INS01": [
+      "insurance", "insurer", "policy", "premium", "claim"
+    ],
+    "IMM01": [
+      "visa", "immigration", "passport", "residency"
+    ],
+    "TAX01": [
+      "tax", "taxation", "assessment", "gst", "income tax"
+    ],
+    "ENV01": [
+      "pollution", "environmental", "waste", "emission"
+    ],
+    "EDU01": [
+      "university", "college", "admission", "examination", "school"
+    ],
+    "FAM01": [
+      "spouse", "marriage", "marital", "family dispute"
+    ],
+    "FAM02": [
+      "divorce", "separation", "marital dissolution"
+    ],
+    "FAM03": [
+      "custody", "guardianship", "parenting", "visitation"
+    ],
+    "FAM04": [
+      "alimony", "maintenance", "spousal support"
+    ],
+    "CON02": [
+      "consumer", "defective product", "refund", "unfair trade",
+      "faulty product"
+    ],
+    "COM01": [
+      "shareholder", "director", "corporate governance", "company"
+    ],
+    "COM02": [
+      "incorporation", "registration", "register", "compliance", "startup"
+    ],
+    "CIV01": [
+      "debt recovery", "civil suit", "damages", "civil claim"
+    ]
+  },
+  "dominant_phrases": [
+    "assault", "attacked", "murder", "rape", "kidnapping",
+    "threatened", "threatening"
+  ],
+  "high_weight_phrases": [
+    "forged", "forgery", "cheated", "cheating", "defrauded",
+    "deceived", "deception", "theft", "stolen", "robbed"
+  ],
+  "contractions": {
+    "doesnt": "does not",
+    "dont": "do not",
+    "isnt": "is not",
+    "arent": "are not",
+    "cant": "cannot",
+    "wont": "will not",
+    "didnt": "did not",
+    "couldnt": "could not",
+    "wouldnt": "would not",
+    "shouldnt": "should not",
+    "wasnt": "was not",
+    "werent": "were not",
+    "hasnt": "has not",
+    "havent": "have not",
+    "im": "i am",
+    "ive": "i have",
+    "id": "i would",
+    "ill": "i will",
+    "refuses": "refuses",
+    "refused": "refused"
+  }
+}

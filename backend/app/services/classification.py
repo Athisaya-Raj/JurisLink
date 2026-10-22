@@ -53,70 +53,81 @@ _KEYWORD_WEIGHT = 0.4
 # Review threshold on the combined decision margin (top score - second score).
 _REVIEW_MARGIN_THRESHOLD = 0.05
 
-# High-precision patterns for terms that the canonical ``keywords`` do not
-# cover. This is a small, curated, documented addition — it only nudges the
-# combined score and never overrides a strong model prediction on its own.
-_CURATED_PATTERNS: Dict[str, List[str]] = {
-    "CRI01": ["assault", "threatened", "threatening", "attacked", "theft",
-              "stolen", "robbed", "arrested", "bail", "police complaint",
-              "criminal case", "offence", "offense"],
-    "FRA01": ["forged", "forgery", "cheated", "cheating", "deceived",
-              "defrauded", "misrepresented", "deception"],
-    "PRO02": ["landlord", "tenant", "eviction", "lease", "security deposit",
-              "rental deposit", "rent agreement", "rent"],
-    "PRO01": ["boundary", "encroachment", "title deed", "land ownership",
-              "property ownership", "land dispute", "land"],
-    "PRO03": ["inheritance", "succession", "probate", "heir", "estate dispute",
-              "will dispute", "inherited"],
-    "CON01": ["breach", "breached", "contract", "agreement", "violated",
-              "failed to complete", "non payment", "non-payment"],
-    "CYB01": ["phishing", "hacked", "online scam", "identity theft",
-              "cyber fraud", "cybercrime"],
-    "MED01": ["medical negligence", "malpractice", "hospital", "treatment",
-              "surgery"],
-    "IPR01": ["copyright", "trademark", "patent", "intellectual property"],
-    "EMP01": ["termination", "terminated", "dismissed", "fired", "harassment",
-              "workplace", "employer"],
-    "EMP02": ["salary", "wages", "unpaid", "bonus", "overtime", "final settlement"],
-    "BANK01": ["bank", "loan", "interest rate", "banking"],
-    "INS01": ["insurance", "insurer", "policy", "premium", "claim"],
-    "IMM01": ["visa", "immigration", "passport", "residency"],
-    "TAX01": ["tax", "taxation", "assessment", "gst", "income tax"],
-    "ENV01": ["pollution", "environmental", "waste", "emission"],
-    "EDU01": ["university", "college", "admission", "examination", "school"],
-    "FAM01": ["spouse", "marriage", "marital", "family dispute"],
-    "FAM02": ["divorce", "separation", "marital dissolution"],
-    "FAM03": ["custody", "guardianship", "parenting", "visitation"],
-    "FAM04": ["alimony", "maintenance", "spousal support"],
-    "CON02": ["consumer", "defective product", "refund", "unfair trade",
-              "faulty product"],
-    "COM01": ["shareholder", "director", "corporate governance", "company"],
-    "COM02": ["incorporation", "registration", "register", "compliance", "startup"],
-    "CIV01": ["debt recovery", "civil suit", "damages", "civil claim"],
-}
+# Classification data is now loaded dynamically from an external JSON file.
+# This allows easy maintenance, updates, and scaling without code changes.
+_CLASSIFICATION_DATA_CACHE: Optional[Dict[str, Any]] = None
 
-# High-severity violence terms that legally dominate an overlapping civil or
-# property description (e.g. "threatened to assault me during a boundary
-# dispute" is a criminal matter, not a property dispute).
-_DOMINANT_PHRASES = {
-    "assault", "attacked", "murder", "rape", "kidnapping",
-    "threatened", "threatening",
-}
 
-# Strong fraud terms that should outweigh a generic overlap word.
-_HIGH_WEIGHT_PHRASES = {
-    "forged", "forgery", "cheated", "cheating", "defrauded",
-    "deceived", "deception", "theft", "stolen", "robbed",
-}
+def _load_classification_data() -> Dict[str, Any]:
+    """Load classification data from external JSON file (cached in memory).
+    
+    The data file contains:
+    - curated_patterns: high-precision keyword patterns per category
+    - dominant_phrases: high-severity terms that override other classifications
+    - high_weight_phrases: strong fraud/crime indicators
+    - contractions: common English contractions for text normalization
+    
+    Returns the loaded data dictionary.
+    Raises ClassificationError if the file cannot be loaded.
+    """
+    global _CLASSIFICATION_DATA_CACHE
+    
+    if _CLASSIFICATION_DATA_CACHE is not None:
+        return _CLASSIFICATION_DATA_CACHE
+    
+    data_file = Path(__file__).parent / "classification_data.json"
+    
+    if not data_file.exists():
+        raise ClassificationError(
+            f"Classification data file not found: {data_file}. "
+            "Please ensure classification_data.json exists in the services directory."
+        )
+    
+    try:
+        with open(data_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (IOError, json.JSONDecodeError) as exc:
+        raise ClassificationError(
+            f"Failed to load classification data from {data_file}: {exc}"
+        ) from exc
+    
+    # Validate the structure
+    required_keys = {"curated_patterns", "dominant_phrases", "high_weight_phrases", "contractions"}
+    if not all(key in data for key in required_keys):
+        raise ClassificationError(
+            f"Classification data file is missing required keys. "
+            f"Expected: {required_keys}, Got: {set(data.keys())}"
+        )
+    
+    _CLASSIFICATION_DATA_CACHE = data
+    logger.debug("Loaded classification data from %s", data_file)
+    return data
 
-_CONTRACTIONS = {
-    "doesnt": "does not", "dont": "do not", "isnt": "is not", "arent": "are not",
-    "cant": "cannot", "wont": "will not", "didnt": "did not", "couldnt": "could not",
-    "wouldnt": "would not", "shouldnt": "should not", "wasnt": "was not",
-    "werent": "were not", "hasnt": "has not", "havent": "have not",
-    "im": "i am", "ive": "i have", "id": "i would", "ill": "i will",
-    "refuses": "refuses", "refused": "refused",
-}
+
+def _get_curated_patterns() -> Dict[str, List[str]]:
+    """Get category-specific keyword patterns."""
+    data = _load_classification_data()
+    return data.get("curated_patterns", {})
+
+
+def _get_dominant_phrases() -> set:
+    """Get high-severity phrases that override other classifications."""
+    data = _load_classification_data()
+    phrases = data.get("dominant_phrases", [])
+    return set(phrases) if phrases else set()
+
+
+def _get_high_weight_phrases() -> set:
+    """Get strong fraud/crime terms."""
+    data = _load_classification_data()
+    phrases = data.get("high_weight_phrases", [])
+    return set(phrases) if phrases else set()
+
+
+def _get_contractions() -> Dict[str, str]:
+    """Get contraction expansion map."""
+    data = _load_classification_data()
+    return data.get("contractions", {})
 
 
 # --------------------------------------------------------------------------
@@ -127,11 +138,13 @@ def clean_text(text: str) -> str:
 
     Lowercases, removes punctuation, collapses whitespace, and expands common
     contractions so negations and pronouns are preserved as meaningful tokens.
+    Contraction mappings are loaded from the external classification_data.json file.
     """
     text = (text or "").lower()
     text = re.sub(r"[^a-z0-9\s]", " ", text)
     text = re.sub(r"\s+", " ", text).strip()
-    tokens = [_CONTRACTIONS.get(t, t) for t in text.split()]
+    contractions = _get_contractions()
+    tokens = [contractions.get(t, t) for t in text.split()]
     return " ".join(tokens)
 
 
@@ -259,16 +272,21 @@ def build_category_phrases(cat_defs: Dict[str, Dict[str, Any]]) -> Dict[str, set
     """Build a per-category set of canonical phrases for hybrid scoring.
 
     Uses the canonical ``keywords`` from the database plus the curated
-    high-precision patterns. Category *names* are intentionally not used as
-    single-token signals because words like "property" or "family" are too
-    generic to be discriminative.
+    high-precision patterns loaded from classification_data.json.
+    Category *names* are intentionally not used as single-token signals
+    because words like "property" or "family" are too generic to be
+    discriminative.
     """
     phrases: Dict[str, set] = {}
+    curated_patterns = _get_curated_patterns()
+    
     for cid, d in cat_defs.items():
         s = {clean_text(k) for k in d["keywords"]}
-        for p in _CURATED_PATTERNS.get(cid, []):
+        # Add curated patterns for this category
+        for p in curated_patterns.get(cid, []):
             s.add(clean_text(p))
         phrases[cid] = {p for p in s if p}
+    
     return phrases
 
 
@@ -449,14 +467,17 @@ def predict(text: str) -> Dict[str, Any]:
 
     # Hybrid keyword-overlap score.
     kw = {cid: 0.0 for cid in classes}
+    dominant_phrases = _get_dominant_phrases()
+    high_weight_phrases = _get_high_weight_phrases()
+    
     for cid, ph in phrases.items():
         if cid not in kw:
             continue
         for p in ph:
             if p and p in cleaned:
-                if p in _DOMINANT_PHRASES:
+                if p in dominant_phrases:
                     weight = 10.0
-                elif p in _HIGH_WEIGHT_PHRASES:
+                elif p in high_weight_phrases:
                     weight = 3.0
                 else:
                     weight = 1.0 + 0.5 * p.count(" ")

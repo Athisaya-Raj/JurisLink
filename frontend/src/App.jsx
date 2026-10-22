@@ -3,6 +3,9 @@ import Layout from './components/Layout.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { useAuth } from './context/AuthContext.jsx'
 import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
+import RegisterUser from './pages/RegisterUser.jsx'
+import RegisterLawyer from './pages/RegisterLawyer.jsx'
 import UserDashboard from './pages/dashboard/UserDashboard.jsx'
 import LawyerDashboard from './pages/dashboard/LawyerDashboard.jsx'
 import NewCase from './pages/cases/NewCase.jsx'
@@ -26,6 +29,9 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/register/user" element={<RegisterUser />} />
+      <Route path="/register/lawyer" element={<RegisterLawyer />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/" element={<HomeRedirect />} />
 

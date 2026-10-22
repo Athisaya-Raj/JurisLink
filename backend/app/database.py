@@ -33,6 +33,7 @@ COLLECTIONS = [
 APP_COLLECTIONS = [
     "case_invitation_temp",
     "progress_note_temp",
+    "user_temp",
 ]
 
 
@@ -99,7 +100,10 @@ def ensure_indexes(db=None) -> None:
             logger.warning("Could not create index on %s: %s", coll_name, exc)
 
     _safe("legal_categories_temp", [("category_id", ASCENDING)], unique=True, name="uq_category_id")
+    # Lawyer profiles (imported read-only, but enhanced for registration support).
     _safe("lawyer_temp", [("lawyer_id", ASCENDING)], unique=True, name="uq_lawyer_id")
+    _safe("lawyer_temp", [("username", ASCENDING)], unique=True, sparse=True, name="uq_lawyer_username")
+    _safe("lawyer_temp", [("email", ASCENDING)], unique=True, sparse=True, name="uq_lawyer_email")
     _safe("lawyer_temp", [("specializations", ASCENDING)], name="ix_lawyer_specializations")
     _safe("case_training_data_temp", [("category_id", ASCENDING)], name="ix_train_category")
 
@@ -145,6 +149,11 @@ def ensure_indexes(db=None) -> None:
     _safe("progress_note_temp", [("progress_note_id", ASCENDING)], unique=True, name="uq_progress_note_id")
     _safe("progress_note_temp", [("case_id", ASCENDING)], name="ix_progress_case")
     _safe("progress_note_temp", [("lawyer_id", ASCENDING)], name="ix_progress_lawyer")
+
+    # User registration (application-managed collection).
+    _safe("user_temp", [("user_id", ASCENDING)], unique=True, name="uq_user_id")
+    _safe("user_temp", [("username", ASCENDING)], unique=True, name="uq_username")
+    _safe("user_temp", [("email", ASCENDING)], unique=True, name="uq_user_email")
 
 
 def collection_counts(db=None) -> dict:
